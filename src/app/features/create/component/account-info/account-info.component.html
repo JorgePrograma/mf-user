@@ -1,54 +1,103 @@
-<div [formGroup]="formGroupRef" class="account-info-form">
-  <!-- Campo Avatar -->
-  <mat-form-field appearance="outline">
-    <mat-label>Avatar</mat-label>
-    <input matInput formControlName="avatar" placeholder="URL del avatar" />
-  </mat-form-field>
+<div [formGroup]="formGroupRef" class="flex flex-col items-center gap-6 p-6 max-w-4xl mx-auto">
+  <!-- Sección principal -->
+  <div class="w-full bg-white rounded-lg shadow-sm p-6 space-y-6">
+    <!-- Campos Avatar y Rol -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <!-- Campo Avatar -->
+      <mat-form-field appearance="outline" class="w-full">
+        <mat-label>Avatar</mat-label>
+        <input matInput formControlName="avatar" placeholder="URL del avatar" />
+        <mat-icon matSuffix>link</mat-icon>
+      </mat-form-field>
 
-  <!-- Campo Role -->
-  <mat-form-field appearance="outline">
-    <mat-label>Rol</mat-label>
-    <mat-select formControlName="idRole">
-      <mat-option *ngFor="let option of roleOptions" [value]="option.value">
-        {{ option.label }}
-      </mat-option>
-    </mat-select>
-  </mat-form-field>
+      <!-- Campo Role -->
+      <mat-form-field appearance="outline" class="w-full">
+        <mat-label>Rol</mat-label>
+        <mat-select formControlName="idRole">
+          <mat-option *ngFor="let option of roleOptions" [value]="option.value">
+            {{ option.label }}
+          </mat-option>
+        </mat-select>
+        <mat-icon matSuffix>arrow_drop_down</mat-icon>
+      </mat-form-field>
+    </div>
 
-  <!-- Toggle para Directorio Activo -->
-  <mat-slide-toggle 
-    formControlName="isDirectoryActive" 
-    (change)="onDirectoryActiveChange($event.checked)">
-    Directorio Activo
-  </mat-slide-toggle>
+    <!-- Toggle Directorio Activo -->
+    <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+      <mat-label class="text-gray-600 font-medium">¿Tiene algún directorio activo?</mat-label>
+      <mat-slide-toggle
+        color="primary"
+        formControlName="isDirectoryActive"
+        (change)="onDirectoryActiveChange($event.checked)"
+      >
+        Directorio Activo
+      </mat-slide-toggle>
+    </div>
+  </div>
 
-  <!-- Campos dependientes de Directorio Activo -->
-  <div *ngIf="isDirectoryActive">
-    <!-- Usuario -->
-    <mat-form-field appearance="outline">
-      <mat-label>Usuario</mat-label>
-      <input matInput formControlName="user" placeholder="Nombre de usuario" />
-      <mat-error *ngIf="formGroupRef.get('user')?.invalid && formGroupRef.get('user')?.touched">
-        El usuario es requerido.
-      </mat-error>
-    </mat-form-field>
+  <!-- Sección Directorio Activo -->
+  <div *ngIf="isDirectoryActive" class="w-full bg-white rounded-lg shadow-sm p-6 space-y-4">
+    <h3 class="text-lg font-medium text-gray-700">Datos de la cuenta</h3>
 
-    <!-- Contraseña -->
-    <mat-form-field appearance="outline">
-      <mat-label>Contraseña</mat-label>
-      <input matInput type="password" formControlName="password" placeholder="Contraseña" />
-      <mat-error *ngIf="formGroupRef.get('password')?.invalid && formGroupRef.get('password')?.touched">
-        La contraseña es requerida.
-      </mat-error>
-    </mat-form-field>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <!-- Usuario -->
+      <mat-form-field appearance="outline" class="w-full">
+        <mat-label>Usuario</mat-label>
+        <input
+          matInput
+          formControlName="user"
+          placeholder="Nombre de usuario"
+        />
+        <mat-icon matSuffix>person</mat-icon>
+        <mat-error
+          *ngIf="
+            formGroupRef.get('user')?.invalid &&
+            formGroupRef.get('user')?.touched
+          "
+        >
+          El usuario es requerido.
+        </mat-error>
+      </mat-form-field>
 
-    <!-- Confirmación de Contraseña -->
-    <mat-form-field appearance="outline">
-      <mat-label>Confirmar Contraseña</mat-label>
-      <input matInput type="password" formControlName="confirmationPassword" placeholder="Confirmar contraseña" />
-      <mat-error *ngIf="formGroupRef.get('confirmationPassword')?.invalid && formGroupRef.get('confirmationPassword')?.touched">
-        La confirmación de contraseña es requerida.
-      </mat-error>
-    </mat-form-field>
+      <!-- Contraseña -->
+      <mat-form-field appearance="outline" class="w-full">
+        <mat-label>Contraseña</mat-label>
+        <input
+          matInput
+          type="password"
+          formControlName="password"
+          placeholder="Contraseña"
+        />
+        <mat-icon matSuffix>lock</mat-icon>
+        <mat-error
+          *ngIf="
+            formGroupRef.get('password')?.invalid &&
+            formGroupRef.get('password')?.touched
+          "
+        >
+          La contraseña es requerida.
+        </mat-error>
+      </mat-form-field>
+
+      <!-- Confirmación de Contraseña -->
+      <mat-form-field appearance="outline" class="w-full">
+        <mat-label>Confirmar Contraseña</mat-label>
+        <input
+          matInput
+          type="password"
+          formControlName="confirmationPassword"
+          placeholder="Confirmar contraseña"
+        />
+        <mat-icon matSuffix>lock_reset</mat-icon>
+        <mat-error
+          *ngIf="
+            formGroupRef.get('confirmationPassword')?.invalid &&
+            formGroupRef.get('confirmationPassword')?.touched
+          "
+        >
+          La confirmación de contraseña es requerida.
+        </mat-error>
+      </mat-form-field>
+    </div>
   </div>
 </div>

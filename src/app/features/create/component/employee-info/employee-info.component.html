@@ -1,6 +1,6 @@
 <div [formGroup]="formGroupRef" class="employee-info-container">
   <!-- Campos del formulario dinámico -->
-  <div class="form-fields-grid">
+  <div class="grid grid-cols-2 md:grid-cols-4 gap-x-10">
     <app-dynamic-form-field
       *ngFor="let field of basicInfoFields()"
       [formGroupRef]="formGroupRef"
