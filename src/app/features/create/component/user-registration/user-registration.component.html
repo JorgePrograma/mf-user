@@ -1,0 +1,68 @@
+<!-- user-registration.component.html -->
+<h2>Registro de Nuevo Usuario</h2>
+
+<!-- *** CAMBIO AQUÍ: de mat-vertical-stepper a mat-horizontal-stepper *** -->
+<mat-horizontal-stepper [linear]="true" #stepper class="mat-elevation-z2">
+  <!-- Añadida clase mat-elevation-z2 para un poco de estilo -->
+
+  <!-- Paso 1: Información Básica -->
+  <mat-step [stepControl]="getFormGroup('basicInfo')" label="Información Básica" [editable]="isEditable">
+    <div class="step-content">
+      <p>Por favor, completa tu información personal.</p>
+      <app-basic-info [formGroupRef]="getFormGroup('basicInfo')"></app-basic-info>
+      <div class="step-actions">
+        <!-- En el primer paso, no hay botón 'Anterior' -->
+        <button mat-raised-button color="primary" matStepperNext>Siguiente <mat-icon>navigate_next</mat-icon></button>
+      </div>
+    </div>
+  </mat-step>
+
+  <!-- Paso 2: Información de Contacto -->
+  <mat-step [stepControl]="getFormGroup('contactInfo')" label="Información de Contacto" [editable]="isEditable">
+    <div class="step-content">
+      <p>Completa tus datos de contacto.</p>
+      <app-contact-info [formGroupRef]="getFormGroup('contactInfo')"></app-contact-info>
+      <div class="step-actions">
+        <button mat-button matStepperPrevious><mat-icon>navigate_before</mat-icon> Anterior</button>
+        <button mat-raised-button color="primary" matStepperNext>Siguiente <mat-icon>navigate_next</mat-icon></button>
+      </div>
+    </div>
+  </mat-step>
+
+  <!-- Paso 3: Información de Empleado -->
+  <mat-step [stepControl]="getFormGroup('employeeInfo')" label="Información de Empleado" [editable]="isEditable">
+    <div class="step-content">
+      <p>Ingresa los detalles de tu rol en la empresa.</p>
+      <app-employee-info [formGroupRef]="getFormGroup('employeeInfo')"></app-employee-info>
+      <div class="step-actions">
+        <button mat-button matStepperPrevious><mat-icon>navigate_before</mat-icon> Anterior</button>
+        <button mat-raised-button color="primary" matStepperNext>Siguiente <mat-icon>navigate_next</mat-icon></button>
+      </div>
+    </div>
+  </mat-step>
+
+  <!-- Paso 4: Información de Cuenta -->
+  <mat-step [stepControl]="getFormGroup('accountInfo')" label="Cuenta" [editable]="isEditable">
+    <div class="step-content">
+      <p>Configura los detalles de tu cuenta.</p>
+      <app-account-info [formGroupRef]="getFormGroup('accountInfo')"></app-account-info>
+      <div class="step-actions">
+        <button mat-button matStepperPrevious><mat-icon>navigate_before</mat-icon> Anterior</button>
+        <button mat-raised-button color="accent" (click)="onSubmit()" [disabled]="registrationForm.invalid">
+          <mat-icon>save</mat-icon> Registrar Usuario
+        </button>
+        <!-- Botón Deshabilitado si el formulario es inválido -->
+        <span *ngIf="registrationForm.invalid && registrationForm.touched" class="form-invalid-message">Formulario inválido</span>
+      </div>
+    </div>
+  </mat-step>
+
+  <!-- Opcional: Iconos para el estado del paso -->
+  <ng-template matStepperIcon="edit">
+    <mat-icon>edit</mat-icon>
+  </ng-template>
+  <ng-template matStepperIcon="done">
+    <mat-icon>done</mat-icon>
+  </ng-template>
+
+</mat-horizontal-stepper>

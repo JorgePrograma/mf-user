@@ -1,0 +1,9 @@
+<!-- basic-info.component.html -->
+<div [formGroup]="formGroupRef" class="basic-info-dynamic-form">
+  <!-- Iteramos sobre la configuración de campos definida en el componente -->
+  <app-dynamic-form-field
+    *ngFor="let field of basicInfoFields"
+    [formGroupRef]="formGroupRef"
+    [config]="field">
+  </app-dynamic-form-field>
+</div>

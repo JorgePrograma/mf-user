@@ -1,0 +1,54 @@
+<div [formGroup]="formGroupRef" class="account-info-form">
+  <!-- Campo Avatar -->
+  <mat-form-field appearance="outline">
+    <mat-label>Avatar</mat-label>
+    <input matInput formControlName="avatar" placeholder="URL del avatar" />
+  </mat-form-field>
+
+  <!-- Campo Role -->
+  <mat-form-field appearance="outline">
+    <mat-label>Rol</mat-label>
+    <mat-select formControlName="idRole">
+      <mat-option *ngFor="let option of roleOptions" [value]="option.value">
+        {{ option.label }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <!-- Toggle para Directorio Activo -->
+  <mat-slide-toggle 
+    formControlName="isDirectoryActive" 
+    (change)="onDirectoryActiveChange($event.checked)">
+    Directorio Activo
+  </mat-slide-toggle>
+
+  <!-- Campos dependientes de Directorio Activo -->
+  <div *ngIf="isDirectoryActive">
+    <!-- Usuario -->
+    <mat-form-field appearance="outline">
+      <mat-label>Usuario</mat-label>
+      <input matInput formControlName="user" placeholder="Nombre de usuario" />
+      <mat-error *ngIf="formGroupRef.get('user')?.invalid && formGroupRef.get('user')?.touched">
+        El usuario es requerido.
+      </mat-error>
+    </mat-form-field>
+
+    <!-- Contraseña -->
+    <mat-form-field appearance="outline">
+      <mat-label>Contraseña</mat-label>
+      <input matInput type="password" formControlName="password" placeholder="Contraseña" />
+      <mat-error *ngIf="formGroupRef.get('password')?.invalid && formGroupRef.get('password')?.touched">
+        La contraseña es requerida.
+      </mat-error>
+    </mat-form-field>
+
+    <!-- Confirmación de Contraseña -->
+    <mat-form-field appearance="outline">
+      <mat-label>Confirmar Contraseña</mat-label>
+      <input matInput type="password" formControlName="confirmationPassword" placeholder="Confirmar contraseña" />
+      <mat-error *ngIf="formGroupRef.get('confirmationPassword')?.invalid && formGroupRef.get('confirmationPassword')?.touched">
+        La confirmación de contraseña es requerida.
+      </mat-error>
+    </mat-form-field>
+  </div>
+</div>
