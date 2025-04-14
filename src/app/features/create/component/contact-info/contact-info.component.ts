@@ -71,7 +71,7 @@ export class ContactInfoComponent implements OnInit {
     const selectedCountryData = countries.find(
       (c) => c.name === this.selectedCountry()
     );
-    console.log("departamento seleccionado", countries)
+    console.log('departamento seleccionado', countries);
     const departament = selectedCountryData?.states.find(
       (c) => c.name === this.selectedDepartment()
     );

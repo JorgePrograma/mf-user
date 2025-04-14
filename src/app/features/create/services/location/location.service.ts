@@ -2,6 +2,7 @@ import { HttpClient } from "@angular/common/http";
 import { Injectable, signal } from "@angular/core";
 import { catchError, map, Observable, of, tap } from "rxjs";
 import { ResponseModel } from "../../model/response.model";
+import { EndPoints } from "../../core/utils/endpoints";
 
 // Modelo para Ciudad
 interface Ciudad {
@@ -31,7 +32,6 @@ interface DatosGeograficos {
   providedIn: 'root'
 })
 export class LocationService {
-  private readonly apiUrl = 'https://femrwzf6x6uakaqkb32tl27hgm.apigateway.sa-bogota-1.oci.customer-oci.com/api/v1/Redis/getValue/location';
 
   // Señal privada para el estado interno
   private readonly _countriesSignal = signal<Pais[]>([]);
@@ -42,7 +42,7 @@ export class LocationService {
   constructor(private readonly http: HttpClient) { }
 
   getAllCountries(): Observable<Pais[]> {
-    return this.http.get<ResponseModel<string>>(this.apiUrl).pipe(
+    return this.http.get<ResponseModel<string>>(EndPoints.GET_ALL_LOCATIONS).pipe(
       map(response => {
         try {
           const parsedData = JSON.parse(response.data) as DatosGeograficos;

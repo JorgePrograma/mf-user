@@ -30,7 +30,8 @@ import { Role } from '../../model/role.model';
 export class AccountInfoComponent implements OnInit {
   @Input({ required: true }) formGroupRef!: FormGroup; // Recibe el FormGroup específico
 
-  private roleService = inject(RoleService); // Inyectamos el servicio de roles
+  private readonly roleService = inject(RoleService); // Inyectamos el servicio de roles
+  private readonly rolesSignal = this.roleService.rolesSignal;
 
   isDirectoryActive = false; // Estado del checkbox para mostrar/ocultar campos
   roleOptions: { value: string; label: string }[] = []; // Opciones para el campo idRole
@@ -40,7 +41,7 @@ export class AccountInfoComponent implements OnInit {
     this.initializeFormControls();
 
     // Cargar roles al inicializar el componente
-    this.loadRoles();
+    this.roleService.getAllRoles().subscribe()
   }
 
   /**
@@ -67,21 +68,6 @@ export class AccountInfoComponent implements OnInit {
     }
   }
 
-  /**
-   * Carga los roles desde el servicio RoleService.
-   */
-  private loadRoles(): void {
-    this.roleService.getRoles().subscribe({
-      next: (roles) => {
-        this.roleOptions = roles.map(role => ({
-          value: role.id,
-          label: role.name
-        }));
-        console.log('Roles cargados:', this.roleOptions);
-      },
-      error: (err) => console.error('Error al cargar roles:', err)
-    });
-  }
 
   /**
    * Maneja el cambio del estado de "Directorio activo".

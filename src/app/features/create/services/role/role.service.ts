@@ -1,54 +1,47 @@
-import { Injectable } from '@angular/core';
-import { Observable, of, throwError } from 'rxjs';
-import { catchError, delay } from 'rxjs/operators';
+import { HttpClient } from '@angular/common/http';
+import { Injectable, signal } from '@angular/core';
+import { catchError, map, Observable, of, tap } from 'rxjs';
+import { Config } from '../../core/utils/config';
+import { EndPoints } from '../../core/utils/endpoints';
+import { ResponseModel } from '../../model/response.model';
 import { Role } from '../../model/role.model';
-import { RolesMock } from '../../mocks/rolesMock';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class RoleService {
-  constructor() {}
+   // Señal privada para el estado interno
+  private readonly _roles = signal<Role[]>([]);
 
-  /**
-   * Simula la obtención de roles desde un backend.
-   * @returns Observable<Role[]>
-   */
-  getRoles(): Observable<Role[]> {
-    return of(RolesMock.rolesMock).pipe(
-      delay(1000), // Simula un retraso en la respuesta del servidor
-      catchError(this.handleError<Role[]>('getRoles', []))
+  // Señal pública de solo lectura
+  public readonly rolesSignal = this._roles.asReadonly();
+
+  constructor(private readonly http: HttpClient) {}
+
+  getAllRoles(): Observable<Role[]> {
+    return this.http.get<ResponseModel<string>>(EndPoints.GET_ALL_ROLES,{
+      headers:{
+        Authorization:'Bearer '+ Config.TOKEN
+      }
+    }).pipe(
+      map((response) => {
+        try {
+          const parsedData = JSON.parse(response.data) as { roles: Role[] };
+          console.log("roles", parsedData)
+          return parsedData.roles || [];
+        } catch (error) {
+          console.error('Error parseando JSON:', error);
+          return [];
+        }
+      }),
+      tap((roles) => {
+        this._roles.set(roles);
+        console.log('Roles actualizadas:', roles);
+      }),
+      catchError((error) => {
+        console.error('Error en la solicitud HTTP:', error);
+        return of([]);
+      })
     );
-  }
-
-  /**
-   * Simula la obtención de un rol específico por su ID.
-   * @param id ID del rol
-   * @returns Observable<Role>
-   */
-  getRoleById(id: string): Observable<Role> {
-    const role = RolesMock.rolesMock.find(r => r.id === id);
-    if (role) {
-      return of(role).pipe(
-        delay(500), // Simula un retraso en la respuesta del servidor
-        catchError(this.handleError<Role>('getRoleById'))
-      );
-    } else {
-      return throwError(() => new Error(`Role with ID ${id} not found`)).pipe(
-        catchError(this.handleError<Role>('getRoleById'))
-      );
-    }
-  }
-
-  /**
-   * Manejo genérico de errores.
-   * @param operation Nombre de la operación que falló
-   * @param result Valor opcional para retornar en caso de error
-   */
-  private handleError<T>(operation = 'operation', result?: T) {
-    return (error: any): Observable<T> => {
-      console.error(`${operation} failed: ${error.message}`); // Log del error
-      return of(result as T); // Retorna un valor seguro para que la aplicación no falle
-    };
   }
 }
