@@ -16,7 +16,9 @@ export interface Department {
 @Injectable({ providedIn: 'root' })
 export class LocationService {
   private countries = LocationMock.countriesMock;
+  private readonly apiUrl = 'https://femrwzf6x6uakaqkb32tl27hgm.apigateway.sa-bogota-1.oci.customer-oci.com/api/v1/Redis/getValue/branches';
 
+  
   getCountries(): Country[] {
     return this.countries;
   }
