@@ -1,4 +1,16 @@
-import { Component, Input, inject, computed, Signal, ChangeDetectionStrategy, OnInit, signal, DestroyRef, ChangeDetectorRef } from '@angular/core';
+import { map } from 'rxjs';
+import {
+  Component,
+  Input,
+  inject,
+  computed,
+  Signal,
+  ChangeDetectionStrategy,
+  OnInit,
+  signal,
+  DestroyRef,
+  ChangeDetectorRef,
+} from '@angular/core';
 import { FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -6,6 +18,7 @@ import { CountryMock } from '../../mocks/location.mock';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
+import { LocationService } from '../../services/location/location.service';
 
 @Component({
   selector: 'app-contact-info',
@@ -15,53 +28,66 @@ import { MatSelectModule } from '@angular/material/select';
     ReactiveFormsModule,
     MatFormFieldModule,
     MatInputModule,
-    MatSelectModule
+    MatSelectModule,
   ],
   templateUrl: './contact-info.component.html',
   styleUrls: ['./contact-info.component.css'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ContactInfoComponent implements OnInit {
   @Input({ required: true }) formGroupRef!: FormGroup;
 
+  // Servicios
+  private readonly locationService = inject(LocationService);
+  // Señales para obtener datos
+  private readonly locationSignal = this.locationService.datosGeograficosSignal;
+
+  locationOptions = computed(() => {
+    const countries = this.locationSignal();
+    return countries.map((item) => ({
+      value: item.name,
+      label: item.name,
+    }));
+  });
+
   protected selectedCountry = signal<string>('');
   protected selectedDepartment = signal<string>('');
 
-  countries = CountryMock.countriesMock.map(c => ({
-    value: c.pais,
-    label: c.pais
-  }));
-
   departmentOptions = computed(() => {
-    const selectedCountryData = CountryMock.countriesMock.find(
-      c => c.pais === this.selectedCountry()
+    const countries = this.locationSignal();
+    const selectedCountryData = countries.find(
+      (c) => c.name === this.selectedCountry()
     );
-
-    return selectedCountryData?.departamentos.map(d => ({
-      value: d.nombre,
-      label: d.nombre
-    })) || [];
+    return (
+      selectedCountryData?.states.map((d) => ({
+        value: d.name,
+        label: d.name,
+      })) || []
+    );
   });
 
   cityOptions = computed(() => {
-    const selectedCountryData = CountryMock.countriesMock.find(
-      c => c.pais === this.selectedCountry()
+    const countries = this.locationSignal();
+    const selectedCountryData = countries.find(
+      (c) => c.name === this.selectedCountry()
     );
-
-    const selectedDepartmentData = selectedCountryData?.departamentos.find(
-      d => d.nombre === this.selectedDepartment()
+    console.log("departamento seleccionado", countries)
+    const departament = selectedCountryData?.states.find(
+      (c) => c.name === this.selectedDepartment()
     );
-
-    return selectedDepartmentData?.ciudades.map(city => ({
-      value: city,
-      label: city
-    })) || [];
+    const cities =
+      departament?.cities.map((city) => ({
+        value: city.id,
+        label: city.name,
+      })) || [];
+    return cities;
   });
 
   private destroyRef = inject(DestroyRef);
   private cdr = inject(ChangeDetectorRef);
 
   ngOnInit() {
+    this.locationService.getAllCountries().subscribe();
     this.setupCountryListener();
     this.setupDepartmentListener();
   }
@@ -71,8 +97,7 @@ export class ContactInfoComponent implements OnInit {
     if (countryControl) {
       countryControl.valueChanges
         .pipe(takeUntilDestroyed(this.destroyRef))
-        .subscribe(value => {
-          console.log('País seleccionado:', value);
+        .subscribe((value) => {
           this.selectedCountry.set(value); // Actualizar la señal con el valor seleccionado
           this.updateDepartments();
         });
@@ -84,8 +109,7 @@ export class ContactInfoComponent implements OnInit {
     if (departmentControl) {
       departmentControl.valueChanges
         .pipe(takeUntilDestroyed(this.destroyRef))
-        .subscribe(value => {
-          console.log('Departamento seleccionado:', value);
+        .subscribe((value) => {
           this.selectedDepartment.set(value); // Actualizar la señal con el valor seleccionado
           this.updateCities();
         });
@@ -97,11 +121,15 @@ export class ContactInfoComponent implements OnInit {
     if (departmentControl) {
       if (!this.selectedCountry()) {
         departmentControl.disable(); // Deshabilitar si no hay país seleccionado
-        console.log('Departamento deshabilitado porque no hay país seleccionado.');
+        console.log(
+          'Departamento deshabilitado porque no hay país seleccionado.'
+        );
       } else {
         departmentControl.reset();
         departmentControl.enable(); // Habilitar el control si se seleccionó un país
-        console.log('Departamentos actualizados:', [...this.departmentOptions()]);
+        console.log('Departamentos actualizados:', [
+          ...this.departmentOptions(),
+        ]);
       }
     }
 
@@ -120,7 +148,9 @@ export class ContactInfoComponent implements OnInit {
     if (cityControl) {
       if (!this.selectedDepartment()) {
         cityControl.disable(); // Deshabilitar si no hay departamento seleccionado
-        console.log('Ciudad deshabilitada porque no hay departamento seleccionado.');
+        console.log(
+          'Ciudad deshabilitada porque no hay departamento seleccionado.'
+        );
       } else {
         cityControl.reset();
         cityControl.enable(); // Habilitar el control si se seleccionó un departamento

@@ -1,35 +1,78 @@
-// location.service.ts
-import { Injectable } from '@angular/core';
-import { of } from 'rxjs';
-import { LocationMock } from '../../model/location.model';
+import { HttpClient } from "@angular/common/http";
+import { Injectable, signal } from "@angular/core";
+import { catchError, map, Observable, of, tap } from "rxjs";
+import { ResponseModel } from "../../model/response.model";
 
-export interface Country {
-  pais: string;
-  departamentos: Department[];
+// Modelo para Ciudad
+interface Ciudad {
+  id: string;
+  name: string;
 }
 
-export interface Department {
-  nombre: string;
-  ciudades: string[];
+// Modelo para Estado/Departamento
+interface Estado {
+  id: number;
+  name: string;
+  cities: Ciudad[];
 }
 
-@Injectable({ providedIn: 'root' })
+// Modelo para País
+interface Pais {
+  name: string;
+  states: Estado[];
+}
+
+// Modelo para la respuesta completa
+interface DatosGeograficos {
+  countries: Pais[];
+}
+
+@Injectable({
+  providedIn: 'root'
+})
 export class LocationService {
-  private countries = LocationMock.countriesMock;
-  private readonly apiUrl = 'https://femrwzf6x6uakaqkb32tl27hgm.apigateway.sa-bogota-1.oci.customer-oci.com/api/v1/Redis/getValue/branches';
+  private readonly apiUrl = 'https://femrwzf6x6uakaqkb32tl27hgm.apigateway.sa-bogota-1.oci.customer-oci.com/api/v1/Redis/getValue/location';
 
-  
-  getCountries(): Country[] {
-    return this.countries;
+  // Señal privada para el estado interno
+  private readonly _countriesSignal = signal<Pais[]>([]);
+
+  // Señal pública de solo lectura
+  public readonly datosGeograficosSignal = this._countriesSignal.asReadonly();
+
+  constructor(private readonly http: HttpClient) { }
+
+  getAllCountries(): Observable<Pais[]> {
+    return this.http.get<ResponseModel<string>>(this.apiUrl).pipe(
+      map(response => {
+        try {
+          const parsedData = JSON.parse(response.data) as DatosGeograficos;
+          console.log("response location", parsedData);
+          console.log("response pais", parsedData.countries);
+          this._countriesSignal.set(parsedData.countries);
+          return parsedData.countries || [];
+        } catch (error) {
+          console.error('Error parseando JSON:', error);
+          return [];
+        }
+      }),
+      catchError(error => {
+        console.error('Error en la solicitud HTTP:', error);
+        return of([]);
+      })
+    );
   }
 
-  getDepartments(countryName: string): Department[] {
-    const country = this.countries.find(c => c.pais === countryName);
-    return country?.departamentos || [];
+  getStates(countryName: string): Estado[] {
+    const datos = this._countriesSignal();
+    if (!datos) return [];
+
+    const country = datos.find(c => c.name === countryName);
+    return country?.states || [];
   }
 
-  getCities(countryName: string, departmentName: string): string[] {
-    const department = this.getDepartments(countryName).find(d => d.nombre === departmentName);
-    return department?.ciudades || [];
+  getCities(countryName: string, stateName: string): Ciudad[] {
+    const states = this.getStates(countryName);
+    const state = states.find(s => s.name === stateName);
+    return state?.cities || [];
   }
 }
