@@ -6,7 +6,7 @@
   <!-- Añadida clase mat-elevation-z2 para un poco de estilo -->
 
   <!-- Paso 1: Información Básica -->
-  <mat-step [stepControl]="getFormGroup('basicInfo')" label="Información Básica" [editable]="isEditable">
+  <mat-step [stepControl]="getFormGroup('basicInfo')" label="Información Básica" [editable]="isEditable" [completed]="true">
     <div class="step-content">
       <p>Por favor, completa tu información personal.</p>
       <app-basic-info [formGroupRef]="getFormGroup('basicInfo')"></app-basic-info>
@@ -18,7 +18,7 @@
   </mat-step>
 
   <!-- Paso 2: Información de Contacto -->
-  <mat-step [stepControl]="getFormGroup('contactInfo')" label="Información de Contacto" [editable]="isEditable">
+  <mat-step [stepControl]="getFormGroup('contactInfo')" label="Información de Contacto" [editable]="isEditable" [completed]="true">
     <div class="step-content">
       <p>Completa tus datos de contacto.</p>
       <app-contact-info [formGroupRef]="getFormGroup('contactInfo')"></app-contact-info>
@@ -30,7 +30,7 @@
   </mat-step>
 
   <!-- Paso 3: Información de Empleado -->
-  <mat-step [stepControl]="getFormGroup('employeeInfo')" label="Información de Empleado" [editable]="isEditable">
+  <mat-step [stepControl]="getFormGroup('employeeInfo')" label="Información de Empleado" [editable]="isEditable" [completed]="true">
     <div class="step-content">
       <p>Ingresa los detalles de tu rol en la empresa.</p>
       <app-employee-info [formGroupRef]="getFormGroup('employeeInfo')"></app-employee-info>
@@ -42,7 +42,7 @@
   </mat-step>
 
   <!-- Paso 4: Información de Cuenta -->
-  <mat-step [stepControl]="getFormGroup('accountInfo')" label="Cuenta" [editable]="isEditable">
+  <mat-step [stepControl]="getFormGroup('accountInfo')" label="Cuenta" [editable]="isEditable" [completed]="true">
     <div class="step-content">
       <p>Configura los detalles de tu cuenta.</p>
       <app-account-info [formGroupRef]="getFormGroup('accountInfo')"></app-account-info>

@@ -2,13 +2,13 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable, signal } from '@angular/core';
 import { catchError, map, Observable, of, tap } from 'rxjs';
 import { Config } from '../../core/utils/config';
-import { EndPoints } from '../../core/utils/endpoints';
 import { ResponseModel } from '../../model/response.model';
 import { Role } from '../../model/role.model';
 
 @Injectable({
   providedIn: 'root',
 })
+
 export class RoleService {
   // Señal privada para el estado interno
   private readonly _roles = signal<Role[]>([]);
@@ -23,7 +23,6 @@ export class RoleService {
       'Content-Type': 'application/json',
       Authorization: `Bearer ${Config.TOKEN}`, // Asegúrate de tener un método getToken()
       // Si necesitas otros headers específicos para CORS, agrégalos aquí
-      'Access-Control-Allow-Origin': '*', // Normalmente esto se configura en el backend
     });
     const options = { headers };
 
