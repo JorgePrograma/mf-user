@@ -1,5 +1,5 @@
 <!-- basic-info.component.html -->
-<div [formGroup]="formGroupRef" class="basic-info-dynamic-form">
+<div [formGroup]="formGroupRef" class="grid grid-cols-2 md:grid-cols-4 gap-x-10">
   <!-- Iteramos sobre la configuración de campos definida en el componente -->
   <app-dynamic-form-field
     *ngFor="let field of basicInfoFields"

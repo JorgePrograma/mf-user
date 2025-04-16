@@ -1,1 +1,16 @@
 @import "@angular/material/prebuilt-themes/indigo-pink.css";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+@layer components {
+  button {
+    @apply px-10 py-2 rounded-lg bg-red-800 text-white;
+
+    /* Estilos para botones de Angular Material */
+    &.mat-button, &.mat-raised-button, &.mat-flat-button, &.mat-stroked-button {
+      @apply px-10 py-2 rounded-lg bg-red-800 text-white;
+    }
+  }
+}

@@ -1,0 +1,102 @@
+/* Estilos para el stepper horizontal */
+::ng-deep .mat-horizontal-stepper-header-container {
+  padding: 24px 12px;
+}
+
+/* Personalización de los iconos de los pasos */
+::ng-deep .mat-step-icon {
+  height: 32px !important;
+  width: 32px !important;
+  font-size: 16px;
+}
+
+/* Círculos indicadores según estado */
+::ng-deep .mat-step-icon-state-done {
+  background-color: #4CAF50 !important; /* Verde para pasos completados */
+  color: white !important;
+}
+
+::ng-deep .mat-step-icon-selected {
+  background-color: #5e5ce6 !important; /* Azul/morado para paso activo */
+  color: white !important;
+}
+
+::ng-deep .mat-step-icon-state-edit {
+  background-color: #4CAF50 !important; /* Verde para pasos editables completados */
+  color: white !important;
+}
+
+::ng-deep .mat-step-icon-state-number {
+  background-color: #e0e0e0 !important; /* Gris para pasos pendientes */
+  color: rgba(0, 0, 0, 0.54) !important;
+}
+
+/* Personalización de las líneas conectoras */
+::ng-deep .mat-stepper-horizontal-line {
+  min-width: 50px;
+  height: 2px !important;
+}
+
+/* Líneas según estado (completado, activo, pendiente) */
+::ng-deep .mat-horizontal-stepper-header {
+  padding: 0 8px !important;
+  height: auto !important;
+}
+
+::ng-deep .mat-stepper-horizontal-line {
+  margin: 0 -4px !important;
+}
+
+/* Líneas verdes para pasos completados */
+::ng-deep .mat-step-header.mat-step-completed + .mat-stepper-horizontal-line {
+  border-top-color: #4CAF50 !important;
+  border-top-width: 2px;
+}
+
+/* Línea azul/morada para paso activo */
+::ng-deep .mat-step-header.mat-step-selected + .mat-stepper-horizontal-line {
+  border-top-color: #5e5ce6 !important;
+  border-top-width: 2px;
+}
+
+/* Personalización de etiquetas de texto */
+::ng-deep .mat-step-label {
+  min-width: 50px;
+  text-align: center;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+::ng-deep .mat-step-label.mat-step-label-active {
+  color: #5e5ce6;
+}
+
+::ng-deep .mat-step-label.mat-step-label-selected {
+  color: #5e5ce6;
+}
+
+::ng-deep .mat-step-label.mat-step-label-completed {
+  color: #4CAF50;
+}
+
+/* Etiquetas de estado debajo de los pasos */
+::ng-deep .mat-step-header .mat-step-label-selected .mat-step-text-label,
+::ng-deep .mat-step-header .mat-step-label-active .mat-step-text-label {
+  font-weight: 500;
+}
+
+/* Estado "completed" debajo de los pasos */
+.step-status {
+  font-size: 12px;
+  margin-top: 4px;
+  text-align: center;
+  color: #757575;
+}
+
+.step-status.completed {
+  color: #4CAF50;
+}
+
+.step-status.in-progress {
+  color: #5e5ce6;
+}

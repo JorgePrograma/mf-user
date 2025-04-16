@@ -10,6 +10,7 @@ import { DynamicFormFieldComponent } from '../dynamic-form-field/dynamic-form-fi
 import { DocumentTypeService } from '../../services/document-type/document-type.service';
 import { DocumentTypeModel } from '../../model/document-type.model';
 import { DynamicFormFieldModel } from '../../model/dynamic-form-field.model';
+import { Validation } from '../../core/validation';
 
 @Component({
   selector: 'app-basic-info',
@@ -50,7 +51,7 @@ export class BasicInfoComponent implements OnInit {
         label: 'Tipo de Documento',
         type: 'select',
         options: this.documentTypeOptions(), // Usamos el valor actual de la señal computada
-        validators: [Validators.required],
+        validators: [Validators.required, Validation.nameValidator],
         appearance: 'outline'
       },
       {
@@ -65,7 +66,7 @@ export class BasicInfoComponent implements OnInit {
         controlName: 'firstName',
         label: 'Primer Nombre',
         type: 'text',
-        validators: [Validators.required],
+        validators: [Validators.required, Validation.nameValidator],
         placeholder: 'Juan',
         appearance: 'outline'
       },
@@ -74,14 +75,15 @@ export class BasicInfoComponent implements OnInit {
         label: 'Segundo Nombre',
         type: 'text',
         placeholder: 'Carlos (Opcional)',
-        appearance: 'outline'
+        appearance: 'outline',
+        validators:[Validation.nameValidator]
         // No required validator
       },
       {
         controlName: 'lastName',
         label: 'Primer Apellido',
         type: 'text',
-        validators: [Validators.required],
+        validators: [Validators.required, Validation.nameValidator],
         placeholder: 'Pérez',
         appearance: 'outline'
       },
@@ -90,15 +92,9 @@ export class BasicInfoComponent implements OnInit {
         label: 'Segundo Apellido',
         type: 'text',
         placeholder: 'Gómez (Opcional)',
-        appearance: 'outline'
-        // No required validator
+        appearance: 'outline',
+        validators:[Validation.nameValidator]
       }
     ];
-
-    // Nota: Si los documentTypeOptions pudieran cambiar *después* de OnInit
-    // (por ejemplo, cargados asíncronamente después), necesitarías un enfoque
-    // más reactivo para actualizar las opciones en la configuración o pasar
-    // la señal directamente al DynamicFormFieldComponent (requeriría modificarlo).
-    // Para este caso, asumimos que los tipos de documento están disponibles síncronamente.
   }
 }

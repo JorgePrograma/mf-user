@@ -8,7 +8,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
 
-// Componente dinámico y modelo
+// Componentes y modelos
 import { DynamicFormFieldComponent } from '../dynamic-form-field/dynamic-form-field.component';
 import { DynamicFormFieldModel } from '../../model/dynamic-form-field.model';
 import { BranchService } from '../../services/branch/branch.service';
@@ -39,22 +39,23 @@ import { GroupModel } from '../../model/group.model';
 export class EmployeeInfoComponent implements OnInit {
   @Input({ required: true }) formGroupRef!: FormGroup;
 
-  private documentTypeService = inject(DocumentTypeService);
-  private postService = inject(PostService);
-  private branchService = inject(BranchService);
-  private groupService = inject(GroupService);
+  // Servicios
+  private readonly documentTypeService = inject(DocumentTypeService);
+  private readonly postService = inject(PostService);
+  private readonly branchService = inject(BranchService);
+  private readonly groupService = inject(GroupService);
 
-  // Señales para obtener datos desde los servicios
-  private documentTypesSignal: Signal<DocumentTypeModel[]> = this.documentTypeService.documentTypesSignal;
-  private postSignal: Signal<PostModel[]> = this.postService.postSignal;
-  private branchSignal: Signal<BranchModel[]> = this.branchService.branchSignal;
-  private groupSignal: Signal<GroupModel[]> = this.groupService.groupSignal;
+  // Señales para obtener datos
+  private readonly documentTypesSignal = this.documentTypeService.documentTypesSignal;
+  private readonly postSignal = this.postService.postSignal;
+  private readonly branchSignal = this.branchService.branchSignal;
+  private readonly groupSignal = this.groupService.groupSignal;
 
-  // Configuración para la tabla de Material
+  // Configuración de la tabla
   displayedColumns: string[] = ['name', 'description', 'actions'];
   selectedGroups: GroupModel[] = [];
 
-  // Señales computadas
+  // Señales computadas para opciones
   documentTypeOptions = computed(() => {
     return this.documentTypesSignal().map(type => ({
       value: type.id,
@@ -63,30 +64,31 @@ export class EmployeeInfoComponent implements OnInit {
   });
 
   postOptions = computed(() => {
-    return this.postSignal().map(type => ({
-      value: type.id,
-      label: `${type.name}`
+    return this.postSignal().map(post => ({
+      value: post.id,
+      label: post.name
     }));
   });
 
   branchOptions = computed(() => {
-    return this.branchSignal().map(type => ({
-      value: type.id,
-      label: `${type.name}`
+    const branches = this.branchSignal();
+    console.log('Branches disponibles:', branches);
+    return branches.map(branch => ({
+      value: branch.id,
+      label: `${branch.name} (${branch.id})`
     }));
   });
 
   groupOptions = computed(() => {
-    return this.groupSignal().map(type => ({
-      value: type.id,
-      label: `${type.name}`
+    return this.groupSignal().map(group => ({
+      value: group.id,
+      label: group.name
     }));
   });
 
-  basicInfoFields!: DynamicFormFieldModel[];
-
-  ngOnInit() {
-    this.basicInfoFields = [
+  // Señal computada para campos del formulario
+  basicInfoFields = computed<DynamicFormFieldModel[]>(() => {
+    return [
       {
         controlName: 'idBranch',
         label: 'Sucursal',
@@ -126,21 +128,20 @@ export class EmployeeInfoComponent implements OnInit {
         options: this.groupOptions(),
         validators: [Validators.required],
         appearance: 'outline',
-        onChange: (event: any) => {
-          this.addGroup(event.value);
-          // Resetear el select después de seleccionar
-          //this.formGroupRef.get('idGroup')?.setValue(null);
-        }
-      },
+        onChange: (event: any) => this.addGroup(event.value)
+      }
     ];
+  });
+
+  ngOnInit() {
+    // Cargar datos iniciales
+    this.branchService.getAllBranches().subscribe();
   }
 
   addGroup(groupId: string) {
-    console.log('Grupo seleccionado ID:', groupId); // <-- Añade esto
     const group = this.groupSignal().find(g => g.id === groupId);
     if (group && !this.selectedGroups.some(g => g.id === groupId)) {
-      this.selectedGroups = [...this.selectedGroups, group]; // Nueva referencia
-      console.log('Grupos seleccionados:', this.selectedGroups); // <-- Añade esto
+      this.selectedGroups = [...this.selectedGroups, group];
       this.updateFormGroup();
     }
   }

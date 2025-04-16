@@ -1,5 +1,5 @@
 export interface BasicInfoModel {
-  documnetType: string;
+  documentType: string;
   documentNumber: string;
   firstName: string;
   middleName?: string;
